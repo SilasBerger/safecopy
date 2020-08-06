@@ -1,18 +1,19 @@
+import sys
 import pathutil
 import logging
+import getopt
 from pathlib import Path
 from handler import HandlerFactory
 
 class Safecopy:
 
-    def __init__(self):
+    def __init__(self, in_root, out_root, spec_file):
         logging.logger.log("Setting up...", tag="MAIN")
-        # TODO: Read from command line args.
-        extensions_filename = "extensions.txt"
-        self.input_root = Path("fixtures").absolute()
-        self.output_root = Path("out").absolute()
-
-        logging.logger = logging.Logger(log_to_file=True)
+        
+        # Get args and convert to paths
+        spec_file = Path(spec_file).absolute()
+        self.input_root = Path(in_root).absolute()
+        self.output_root = Path(out_root).absolute()
 
         if not self.input_root.is_dir():
             logging.logger.log("ERROR: No such input root directory: " + str(self.input_root.name))
@@ -27,7 +28,7 @@ class Safecopy:
 
         # Parse copy specs
         self.copy_specs = {}
-        with open(extensions_filename, "r") as infile:
+        with open(str(spec_file), "r") as infile:
             copy_specs_strings = infile.read()
             for spec_str in copy_specs_strings.split("\n"):
                 spec = self.parse_spec(spec_str)
@@ -69,4 +70,20 @@ class Safecopy:
 
     
 if __name__ == "__main__":
-    Safecopy().run()
+    logging.logger = logging.Logger(log_to_file=True)
+
+    try:
+        optlist, args = getopt.getopt(sys.argv[1:], "", ["in=", "out=", "spec=", "help"])
+    except getopt.GetoptError as err:
+        logging.logger.log("ERROR:" + err, tag="MAIN")
+
+    optdict = {}
+    for opt in optlist:
+        optdict[opt[0]] = opt[1]
+    required_opts = ["--in", "--out", "--spec"]
+    for ro in required_opts:
+        if ro not in optdict.keys():
+            logging.logger.log("ERROR: Missing required option: " + ro, tag="MAIN")
+            exit(2)
+
+    Safecopy(optdict["--in"], optdict["--out"], optdict["--spec"]).run()

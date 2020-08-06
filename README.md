@@ -3,8 +3,8 @@
 - `virtualenv -p python3 venv`
 - `cp bin/magick venv/bin/`
 - `source venv/bin/activate`
-- `python scan-extensions.py > extensions.txt` and edit this file according to the copy specs format
-- `python copy.py -e <extensions_file> -i <input_root> -o <output_root>` 
+- `python scan-extensions.py > spec.txt` and edit this file according to the copy specs format
+- `python safecopy.py --spec <spec_file> --in <input_root> --out <output_root>` 
 
 ## Copy Specs Format
 The copy specs / extensions file contains a list of expected file extensions, one extension per line. Files with an extension which is not in the extensions file are skipped by default (i.e. will not be copied). For every line in the extensions file, follow this format:
