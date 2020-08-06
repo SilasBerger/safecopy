@@ -68,7 +68,14 @@ class Safecopy:
             handler.handle(fp, spec["handler_args"])
         logging.logger.log("Copy process completed successfully", tag="MAIN")
 
-    
+
+def print_usage():
+    print("Usage:")
+    print("\n\tpython safecopy.py --in <input_root> --out <output_root> --spec <specs_file>")
+    print("\tpython safecopy.py --help (display this help text)")
+    print("\nRefer to README.md for additional information.")
+
+
 if __name__ == "__main__":
     logging.logger = logging.Logger(log_to_file=True)
 
@@ -76,14 +83,22 @@ if __name__ == "__main__":
         optlist, args = getopt.getopt(sys.argv[1:], "", ["in=", "out=", "spec=", "help"])
     except getopt.GetoptError as err:
         logging.logger.log("ERROR:" + err, tag="MAIN")
+        print_usage()
+        exit(2)
 
     optdict = {}
     for opt in optlist:
         optdict[opt[0]] = opt[1]
+
+    if "--help" in optdict:
+        print_usage()
+        exit(0)
+
     required_opts = ["--in", "--out", "--spec"]
     for ro in required_opts:
         if ro not in optdict.keys():
             logging.logger.log("ERROR: Missing required option: " + ro, tag="MAIN")
+            print_usage()
             exit(2)
 
     Safecopy(optdict["--in"], optdict["--out"], optdict["--spec"]).run()
