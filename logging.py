@@ -12,7 +12,8 @@ class Logger:
     def _print(self, line):
         print(line)
         if self.log_file is not None:
-            self.log_file.write(line)
+            self.log_file.write(line + "\n")
+            self.log_file.flush()
 
     def log(self, msg, tag=None):
         line = "[" + str(datetime.now()) + "] "

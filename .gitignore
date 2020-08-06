@@ -3,3 +3,5 @@ fixtures
 venv
 .vscode
 __pycache__
+out
+*.log
