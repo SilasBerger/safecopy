@@ -19,3 +19,9 @@ where `ext` is any file extension (no leading dot, case-sensitive), handler is a
 - `txt:c`: Copy `.txt` files without transform
 - `docx:s`: Skip `.docx` files
 - `png:mag#jpg`: Convert `.png` files to `.jpg` using ImageMagick (case sensitive, does not apply to `.PNG`)
+
+## Dependencies
+- ImageMagick 7.0.10-25
+
+## License
+See [LICENSE](LICENSE), [LICENSE_IMAGEMAGICK](LICENSE_IMAGEMAGICK) (`bin/magick`). This project is not associated with or endorsed by ImageMagick.
