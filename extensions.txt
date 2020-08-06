@@ -1,0 +1,16 @@
+tiff:mag#jpg
+JPEG:mag#png
+PNG:mag#jpg
+png:mag#png
+wmv:c
+jpg:mag#png
+evil:s
+ods:c
+flac:c
+virus:s
+mp4:c
+odt:c
+txt:c
+JPG:mag#png
+mp3:c
+gif:c
