@@ -15,7 +15,7 @@ class HandlerFactory:
     def create(self, handler_name):
         if handler_name not in self._handler_names:
             # Invalid handler name, bail
-            logging.logger.log("ERROR: Invalid handler '" + handler_name + "', aborting", tag="HFAC")
+            logging.logger.log("ERROR: Invalid handler name '" + str(handler_name) + "', aborting", tag="HFAC")
             exit(1)
 
         # Dispatch handler

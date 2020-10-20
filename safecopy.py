@@ -16,11 +16,11 @@ class Safecopy:
         self.output_root = Path(out_root).absolute()
 
         if not self.input_root.is_dir():
-            logging.logger.log("ERROR: No such input root directory: " + str(self.input_root.name))
+            logging.logger.log("ERROR: No such input root directory: " + str(self.input_root.absolute()))
             exit(1)
 
         if self.output_root.exists():
-            logging.logger.log("ERROR: Output root '" + str(self.output_root.name) + "' already exists, refusing to overwrite")
+            logging.logger.log("ERROR: Output root '" + str(self.output_root.absolute()) + "' already exists, refusing to overwrite")
             exit(1)
 
         # Initialize handler factory.
@@ -30,15 +30,19 @@ class Safecopy:
         self.copy_specs = {}
         with open(str(spec_file), "r") as infile:
             copy_specs_strings = infile.read()
-            for spec_str in copy_specs_strings.split("\n"):
-                spec = self.parse_spec(spec_str)
+            for idx, spec_str in enumerate(copy_specs_strings.split("\n")):
+                if not spec_str:
+                    # Skip blank line
+                    continue
+                spec = self.parse_spec(spec_str, idx + 1)
                 if spec is not None:
                     self.copy_specs[spec["ext"]] = spec
 
-    def parse_spec(self, spec):
+    def parse_spec(self, spec, line_number):
         spec_parts = spec.split(":")
         if len(spec_parts) <= 1:
-            return None
+            logging.logger.log("ERROR: Invalid spec '" + spec + "' on line " + str(line_number) + ", aborting", tag="MAIN")
+            exit(1)
         ext = spec_parts[0]
         task = spec_parts[1]
         task_parts = task.split("#")
@@ -53,17 +57,24 @@ class Safecopy:
             "handler_args": handler_args
         }
 
+    def add_default_spec(self, ext):
+        default_handler = "s"
+        logging.logger.log("WARNING: No handler specified for extension '" + ext + "', assuming '" + default_handler + "' by default", tag="MAIN")
+        self.copy_specs[ext] = {
+            "ext": ext,
+            "handler": default_handler,
+            "handler_args": ""
+        }
+
     def run(self):
         logging.logger.log("Starting copy process", tag="MAIN")
         file_paths = [f.absolute() for f in self.input_root.rglob("*.*") if f.is_file()]
         for fp in file_paths:
             ext = fp.name.split(".")[-1]
-            spec = None
             if ext not in self.copy_specs:
-                logging.logger.log("No handler specified for extension '" + ext + "', skipping by default", tag="MAIN")
-                spec = self.copy_specs["s"]
-            else:
-                spec = self.copy_specs[ext]
+                # No spec defined for this file extension - create default spec and add it to dictionary.
+                self.add_default_spec(ext)
+            spec = self.copy_specs[ext]
             handler = self.handler_factory.create(spec["handler"])
             handler.handle(fp, spec["handler_args"])
         logging.logger.log("Copy process completed successfully", tag="MAIN")
