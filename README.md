@@ -57,4 +57,4 @@ The `mag` handler is used for converting images into different image formats bef
 ## ⚖️ License
 [MIT](LICENSE.md)
 
-For ImageMagick (binary provided in `bin/magick`), see [LICENSE_IMAGEMAGICK.md](LICENSE_IMAGEMAGICK). This project is not associated with or endorsed by ImageMagick.
+For ImageMagick (binary provided in `bin/magick`), see [LICENSE_IMAGEMAGICK](LICENSE_IMAGEMAGICK.md). This project is not associated with or endorsed by ImageMagick.
